@@ -19,10 +19,30 @@ export function extractToolName(status: string): string | null {
   return first || null;
 }
 
-import { ZOOM_DEFAULT_DPR_FACTOR, ZOOM_MIN } from '../constants.js';
+import { DEFAULT_COLS, DEFAULT_ROWS, TILE_SIZE, ZOOM_MIN } from '../constants.js';
 
-/** Compute a default integer zoom level (device pixels per sprite pixel) */
+/**
+ * Compute a default integer zoom level (device pixels per sprite pixel).
+ *
+ * [AWT PATCH] When embedded in a small viewport (e.g. AWT Inspector panel),
+ * the original DPR-based zoom is too high — the map overflows and only the
+ * center portion is visible.  This patch computes the maximum integer zoom
+ * that fits the default map (DEFAULT_COLS × DEFAULT_ROWS × TILE_SIZE)
+ * within the current viewport, falling back to the original DPR-based
+ * calculation for large viewports (VS Code panel, standalone browser).
+ *
+ * Upstream default: Math.max(ZOOM_MIN, Math.round(ZOOM_DEFAULT_DPR_FACTOR * dpr))
+ * See: https://github.com/pablodelucca/pixel-agents
+ */
 export function defaultZoom(): number {
   const dpr = window.devicePixelRatio || 1;
-  return Math.max(ZOOM_MIN, Math.round(ZOOM_DEFAULT_DPR_FACTOR * dpr));
+
+  // [AWT PATCH] Fractional zoom — fit the map exactly to the viewport
+  // with zero padding.  pixel-agents' renderer uses TILE_SIZE * zoom
+  // for all calculations, so fractional values work correctly.
+  const vw = window.innerWidth * dpr;
+  const vh = window.innerHeight * dpr;
+  const mapW = DEFAULT_COLS * TILE_SIZE;
+  const mapH = DEFAULT_ROWS * TILE_SIZE;
+  return Math.max(ZOOM_MIN, Math.min(vw / mapW, vh / mapH));
 }

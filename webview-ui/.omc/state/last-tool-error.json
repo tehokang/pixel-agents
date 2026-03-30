@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"cd src/lib/theater/pixel-agents && npm install 2>&1 | tail -3 && cd webview-ui && npm run build 2>&1 | tail -10\",\"timeout\":120000,\"description\":\"Install root deps (for shared module) and b...",
+  "error": "Exit code 1\n(eval):cd:1: no such file or directory: src/lib/theater/pixel-agents",
+  "timestamp": "2026-03-30T06:13:44.928Z",
+  "retry_count": 1
+}

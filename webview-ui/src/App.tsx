@@ -164,7 +164,8 @@ function App() {
 
   const [isChangelogOpen, setIsChangelogOpen] = useState(false);
   const [isDebugMode, setIsDebugMode] = useState(false);
-  const [alwaysShowOverlay, setAlwaysShowOverlay] = useState(false);
+  // [AWT PATCH] Default to true so agent status is always visible in embedded mode
+  const [alwaysShowOverlay, setAlwaysShowOverlay] = useState(isBrowserRuntime);
 
   const currentMajorMinor = toMajorMinor(extensionVersion);
 
